@@ -12,7 +12,22 @@ typedef enum e_state {
 
 t_state	handle_initial(char c)
 {
-
+	if (isspace(c))
+	  return (READING_WHITESPACE);
+	if (c == '\'')
+	  return (IN_SINGLE_QUOTE);
+	if (c == '"')
+	  return (IN_DOUBLE_QUOTE);
+	if (c == '>')
+	  return (CHECK_APPEND);
+	if (c == '<')
+	  return (CHECK_HERE_DOC);
+	if (c == '|')
+	{
+	  /*create pipe token*/
+	  return (INITIAL);
+	}
+    	return (READING_ARGUMENT);
 }
 
 t_state	handle_reading(char c)
@@ -60,26 +75,26 @@ while (input[i] != '\0')
 {
     switch (current_state)
 	{
-        case INITIAL:
-            current_state = handle_initial(input[i]);
-            break;
-        case READING_ARGUMENT:
-            current_state = handle_reading(input[i]);
-            break;
-        case IN_SINGLE_QUOTE:
-            current_state = handle_in_single_quote(input[i]);
-            break;
+	  case INITIAL:
+		current_state = handle_initial(input[i]);
+		break;
+	  case READING_ARGUMENT:
+		current_state = handle_reading(input[i]);
+		break;
+	  case IN_SINGLE_QUOTE:
+		current_state = handle_in_single_quote(input[i]);
+		break;
 		case IN_DOUBLE_QUOTE:
-            current_state = handle_in_double_quote(input[i]);
-            break;
+		current_state = handle_in_double_quote(input[i]);
+		break;
 		case CHECK_APPEND:
-            current_state = handle_check_append(input[i]);
+		current_state = handle_check_append(input[i]);
 		case CHECK_HERE_DOC:
-            current_state = handle_check_here_doc(input[i]);
+		current_state = handle_check_here_doc(input[i]);
 		case READING_SPECIAL:
-            current_state = handle_reading_special(input[i]);
+		current_state = handle_reading_special(input[i]);
 		case READING_WHITESPACE:
-            current_state = handle_reading_whitespace(input[i]);
+		current_state = handle_reading_whitespace(input[i]);
     }
     i++;
 }
